@@ -161,10 +161,58 @@ int NovatelImuData::GetRAWIMUS()
 	buffN = fread(&imus._yGyro, 4, 1, fs); if (buffN <= 0) return 1;
 	buffN = fread(&imus.xGyro, 4, 1, fs); if (buffN <= 0) return 1;
 
+	type = EPSON_G365;
+	GetImuScale(type);
+	freq = 200;
+
+	static bool firstflag1 = true;
+	if (firstflag1)
+	{
+		for (int i = 0; i < IMU_LIST_N; i++)
+		{
+			week[i] = imus.gnssWeek;
+			sec[i] = imus.gnssSec;
+			gyrox[i] = imus.xGyro * scale.gyro ;
+			gyroy[i] = -imus._yGyro * scale.gyro ;
+			gyroz[i] = imus.zGyro * scale.gyro;
+
+			accx[i] = imus.xAccel * scale.acc;
+			accy[i] = -imus._yAccel * scale.acc;
+			accz[i] = imus.zAccel * scale.acc;
+		}
+		firstflag1 = false;
+	}
+	else
+	{
+		for (int i = IMU_LIST_N - 1; i >= 1; i--)
+		{
+			week[i] = week[i - 1];
+			sec[i] = sec[i - 1];
+			gyrox[i] = gyrox[i - 1];
+			gyroy[i] = gyroy[i - 1];
+			gyroz[i] = gyroz[i - 1];
+
+			accx[i] = accx[i - 1];
+			accy[i] = accy[i - 1];
+			accz[i] = accz[i - 1];
+		}
+		week[0] = imus.gnssWeek;
+		sec[0] = imus.gnssSec;
+		gyrox[0] = imus.xGyro * scale.gyro;
+		gyroy[0] = -imus._yGyro * scale.gyro;
+		gyroz[0] = imus.zGyro * scale.gyro;
+
+		accx[0] = imus.xAccel * scale.acc;
+		accy[0] = -imus._yAccel * scale.acc;
+		accz[0] = imus.zAccel * scale.acc;
+	}
+
 	imus.update = true;
 	return 0;
 }
 
+/*
+*/
 int NovatelImuData::GetRAWIMUSX()
 {
 	char buff[10] = { 0 };
@@ -197,8 +245,8 @@ int NovatelImuData::GetRAWIMUSX()
 	freq = 200;
 	//scale.gyro = 1.0;
 	//scale.acc = 1.0;
-	static bool firstflag = true;
-	if(firstflag)
+	static bool firstflag2 = true;
+	if(firstflag2)
 	{
 		for(int i = 0; i < IMU_LIST_N; i++)
 		{
@@ -212,7 +260,7 @@ int NovatelImuData::GetRAWIMUSX()
 			accy[i] = -imusx._yAccel * scale.acc * freq;
 			accz[i] = imusx.zAccel * scale.acc * freq;
 		}
-		firstflag = false;
+		firstflag2 = false;
 	}
 	else
 	{
@@ -253,8 +301,10 @@ int NovatelImuData::GetImuScale(ImuType type)
 	}
 	else if (type == EPSON_G365)
 	{
-		scale.gyro = 1.0;
-		scale.acc = 1.0;
+		double sf1 = 0.0151515;
+		double sf2 = 0.4;
+		scale.gyro = sf1 / 65536;
+		scale.acc = sf2 / 65536 * 1.0e-3;
 	}
 	else
 	{

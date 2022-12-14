@@ -10,7 +10,8 @@
 #include "NovatelDmiData.hpp"
 #include "TxtDmiData.hpp"
 
-#define TESTBIN_LIST_N		4
+#define TESTBIN_LIST_N		1000
+#define TESTBIN_LIST_N_MAX	4
 
 struct TestBinUnit
 {
@@ -105,6 +106,14 @@ public:
 	int					       imuOutEnable;
 	int						   gnssOutEnable;
 	int						   dmiOutEnable;
+	int						   lioOutEnable;
+	int						   vioOutEnable;
+
+	int							imuFreq;
+	int							gnssFreq;
+	int							dmiFreq;
+	int							lioFreq;
+	int							vioFreq;
 
 	TestBinData();
 	~TestBinData();

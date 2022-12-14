@@ -109,10 +109,14 @@ int ProcessNTT::Process()
 				needRead[2] = 1;
 			}
 
-			if (testBin.sec0 < 116282)
-				outEnable = 0;
-			else
-				outEnable = 1;
+			//double ts = 116552;
+			//double te = 116552 + 600;
+			//if (testBin.sec0 < ts)
+			//	outEnable = 0;
+			//else if (testBin.sec0 > te)
+			//	outEnable = 0;
+			//else
+			//	outEnable = 1;
 
 			//输出数据到TestBin
 			testBin.imuOutEnable = imuEnable;

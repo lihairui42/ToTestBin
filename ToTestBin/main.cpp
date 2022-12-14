@@ -4,6 +4,8 @@
 #include "ProcessNNT.hpp"
 #include "ProcessNTN.hpp"
 #include "ProcessNTT.hpp"
+#include "Process.hpp"
+#include "CsvLioData.hpp"
 
 using namespace std;
 
@@ -13,7 +15,8 @@ enum NT_Slect
 	NNT = 2,
 	NTN = 3,
 	NTT = 4,
-	OTHER = 5,
+	COM = 5,
+	OTHER = 6,
 };
 
 int funNNN()
@@ -70,15 +73,44 @@ int funNTT()
 	return 0;
 }
 
+int funCOM()
+{
+	//string imuNovatelFile = "D:\\IE\\Group1\\data\\NMND22180012G_2022-08-15_09-51-21.LOG";
+	//string gnssTxtFile = "D:\\IE\\Group1\\data\\Group1-gnss.txt";
+	//string dmiTxtFile = "D:\\IE\\Group1\\data\\NMND22180012G_2022-08-15_09-51-21.dmr.txt";
+	//string testBinFile = "D:\\IE\\Group1\\data\\NMND22180012G_2022-08-15_09-51-21.testbin.txt";
+
+	string imuNovatelFile = "D:\\IE\\Nav1020\\data\\2022_10_20_23_6_13_imu_data.dat.BIN";
+	string gnssTxtFile = "D:\\IE\\Nav1020\\data\\2022_10_20_23_6_13_gps_data.dat";
+	string dmiTxtFile = "D:\\IE\\Nav1020\\data\\2022_10_20_23_6_13_gps_data.dat";
+	string testBinFile = "D:\\IE\\Nav1020\\data\\2022_10_20_23_6_13_gps_data.testbin.txt";
+
+	Process COM(imuNovatelFile, Novatel, 1, 200,
+				gnssTxtFile, Novatel, 1, 5,
+				dmiTxtFile, Novatel, 1, 100,
+				dmiTxtFile, TXT, 0, 10,
+				dmiTxtFile, TXT, 0, 10,
+				testBinFile, 1);
+	
+	COM.Deal();
+	return 0;
+}
+
 
 int funOther()
 {
+	string lioFile = "D:\\IE\\Nav1020\\lio_odom\\odom_2022_10_20_23_35_55.csv";
+
+	CsvLioData lio;
+	lio.file = lioFile;
+	lio.OpenFile();
+	lio.GetData();
 	return 0;
 }
 
 int main()
 {
-	NT_Slect nt = NTT;
+	NT_Slect nt = COM;
 	switch (nt)
 	{
 	case NNN:
@@ -95,6 +127,10 @@ int main()
 
 	case NTT:
 		funNTT();
+		break;
+
+	case COM:
+		funCOM();
 		break;
 
 	case OTHER:

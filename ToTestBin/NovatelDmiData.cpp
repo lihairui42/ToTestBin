@@ -76,6 +76,9 @@ int NovatelDmiData::Check()
 
 int NovatelDmiData::GetData()
 {
+	if (!dmiaHaved) 
+		return 0;
+
 	char buff[10] = { 0 };
 	int  buffN = 0;
 	int  flag = 0;

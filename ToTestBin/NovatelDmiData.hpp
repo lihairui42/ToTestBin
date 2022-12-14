@@ -36,8 +36,8 @@ struct BagRawDMIA
 class NovatelDmiData
 {
 public:
-	string				file;
-	bool				update;
+	string					file;
+	bool					update;
 
 	unsigned char			sync[3];					//1-3
 	unsigned char			HeaderLength;				//4

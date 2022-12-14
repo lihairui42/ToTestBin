@@ -71,10 +71,10 @@ int NovatelGnssData::Check()
 			else if (MessageID == 99)
 			{
 				bestVeli++;
-				if (bestPosi >= 60)
-					bestPosHaved = 1;
+				if (bestVeli >= 60)
+					bestVelHaved = 1;
 				else
-					bestPosHaved = 0;
+					bestVelHaved = 0;
 			}
 
 			//if (bestPosHaved || bestPosHaved)
@@ -85,7 +85,7 @@ int NovatelGnssData::Check()
 	if (!bestPosHaved)
 		cout << "BESTPOSA数据不足！" << endl;
 
-	if (!bestPosHaved)
+	if (!bestVelHaved)
 		cout << "BESTVELA数据不足！" << endl;
 
 	CloseFile();
@@ -114,12 +114,10 @@ int NovatelGnssData::GetData()
 			if (MessageID == 42)
 			{
 				flag = GetBESTPOSA();
-				if (flag) return 1;
 			}
 			else if (MessageID == 99)
 			{
 				flag = GetBESTVELA();
-				if (flag) return 1;
 			}
 			
 			if (bestPosHaved && bestVelHaved && bestPos.update && bestVel.update &&  fabs(bestPos.ms - bestVel.ms) <= 5) break;
@@ -213,5 +211,6 @@ int NovatelGnssData::GetBESTVELA()
 	buffN = fread(&bestVel.vertSpd, 8, 1, fs); if (buffN <= 0) return 1;
 	buffN = fread(&bestVel.reserved2, 4, 1, fs); if (buffN <= 0) return 1;
 
+	bestVel.update = true;
 	return 0;
 }

@@ -35,7 +35,7 @@ struct BagRAWIMUS
 	unsigned short			MessageID;					//5
 	unsigned short			week;						//6
 	unsigned long			ms;							//7
-
+	unsigned long			status;
 	unsigned long			gnssWeek;
 	double					gnssSec;
 	unsigned long			imuStatus;

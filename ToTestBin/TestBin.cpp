@@ -31,16 +31,20 @@ int TestBinData::GetNovatelImu(NovatelImuData &imuN)
 			sec1 *= 1.0;
 
 #if 1
-		int tmpN1 = floor((imuN.sec[0]) * 200);
-		int tmpN2 = floor((imuN.sec[1]) * 200);
+		int tmpN1 = floor((imuN.sec[0]) * imuFreq);
+		int tmpN2 = floor((imuN.sec[1]) * imuFreq);
 		imuUpdateCnt = tmpN1 - tmpN2;
 
 		if (imuUpdateCnt >= 2)
 			imuUpdateCnt *= 1.0;
 
+		//if (imuUpdateCnt >= TESTBIN_LIST_N_MAX)
+		//	return 0;
+
 		for (int i = 0; i < imuUpdateCnt; i++)
 		{
-			sec[i] = (tmpN1-i) * 0.005;
+			double dtt = 1.0 / imuFreq;
+			sec[i] = (tmpN1-i) * dtt;
 			double c0, c1;
 			double dt = imuN.sec[0] - imuN.sec[1];
 			c0 = (sec[i] - imuN.sec[1]) / dt;
@@ -101,13 +105,14 @@ int TestBinData::GetNovatelGnss(NovatelGnssData &gnssN)
 	//BestVel
 	if (gnssN.bestVelHaved)
 	{
-		data.dVe_gnss = gnssN.bestVel.horSpd;
-		data.dVn_gnss = gnssN.bestVel.horSpd;
-		data.dVu_gnss = gnssN.bestVel.trkGnd;
+		double psi = gnssN.bestVel.trkGnd * 3.141592653589793 / 180;
+		data.dVe_gnss = gnssN.bestVel.horSpd * sin(psi);
+		data.dVn_gnss = gnssN.bestVel.horSpd * cos(psi);
+		data.dVu_gnss = gnssN.bestVel.vertSpd;
 
-		data.dVeStd = gnssN.bestVel.trkGnd;
-		data.dVnStd = gnssN.bestVel.trkGnd;
-		data.dVuStd = gnssN.bestVel.trkGnd;
+		data.dVeStd = 0.01;
+		data.dVnStd = 0.01;
+		data.dVuStd = 0.01;
 
 		data.dGnssVel_valid = 1;
 	}
@@ -175,6 +180,7 @@ int TestBinData::GetTxtDmi(TxtDmiData &dmiT)
 #endif
 
 	data.ucState_gnss = data.ucState_gnss | 0x08;
+	data.ucFlag_synchro = 160;
 	
 	return 0;
 }
@@ -201,58 +207,58 @@ int TestBinData::WriteData()
 {
 	if (gnssOutEnable)
 	{
-		fprintf(fs, "%4d,    ", data.nWeek);
-		fprintf(fs, "%.10f,    ", data.dSec_gnss);
+		fprintf(fs, "%4d,    ", data.nWeek);					//1
+		fprintf(fs, "%.10f,    ", data.dSec_gnss);				//2
 
-		fprintf(fs, "%.8f,    ", data.dLat_gnss);
-		fprintf(fs, "%.8f,    ", data.dLon_gnss);
-		fprintf(fs, "%.4f,    ", data.dH_gnss);
-		fprintf(fs, "%.4f,    ", data.dLatStd);
-		fprintf(fs, "%.4f,    ", data.dLonStd);
-		fprintf(fs, "%.4f,    ", data.dHStd);
+		fprintf(fs, "%.8f,    ", data.dLat_gnss);				//3
+		fprintf(fs, "%.8f,    ", data.dLon_gnss);				//4
+		fprintf(fs, "%.4f,    ", data.dH_gnss);					//5
+		fprintf(fs, "%.4f,    ", data.dLatStd);					//6
+		fprintf(fs, "%.4f,    ", data.dLonStd);					//7
+		fprintf(fs, "%.4f,    ", data.dHStd);					//8
 
-		fprintf(fs, "%4d,    ", data.ucGnssPos_FixFlag);
-		fprintf(fs, "%4d,    ", data.ucGnssPos_Q);
+		fprintf(fs, "%4d,    ", data.ucGnssPos_FixFlag);		//9
+		fprintf(fs, "%4d,    ", data.ucGnssPos_Q);				//10
 
-		fprintf(fs, "%.5f,    ", data.dVe_gnss);
-		fprintf(fs, "%.5f,    ", data.dVn_gnss);
-		fprintf(fs, "%.5f,    ", data.dVu_gnss);
-		fprintf(fs, "%.5f,    ", data.dVeStd);
-		fprintf(fs, "%.5f,    ", data.dVnStd);
-		fprintf(fs, "%.5f,    ", data.dVuStd);
+		fprintf(fs, "%.5f,    ", data.dVe_gnss);				//11
+		fprintf(fs, "%.5f,    ", data.dVn_gnss);				//12
+		fprintf(fs, "%.5f,    ", data.dVu_gnss);				//13
+		fprintf(fs, "%.5f,    ", data.dVeStd);					//14
+		fprintf(fs, "%.5f,    ", data.dVnStd);					//15
+		fprintf(fs, "%.5f,    ", data.dVuStd);					//16
 
-		fprintf(fs, "%4d,    ", data.dGnssVel_valid);
+		fprintf(fs, "%4d,    ", data.dGnssVel_valid);			//17
 
-		fprintf(fs, "%.8f,    ", data.dAzi_gnss);
-		fprintf(fs, "%.8f,    ", data.dAzi_Std_gnss);
+		fprintf(fs, "%.8f,    ", data.dAzi_gnss);				//18
+		fprintf(fs, "%.8f,    ", data.dAzi_Std_gnss);			//19
 
-		fprintf(fs, "%.3f,    ", data.dBaseline_gnss);
-		fprintf(fs, "%d,    ", data.ucState_gnss);
+		fprintf(fs, "%.3f,    ", data.dBaseline_gnss);			//20
+		fprintf(fs, "%d,    ", data.ucState_gnss);				//21
 	}
 
 
 	if (imuOutEnable)
 	{
-		fprintf(fs, "%.10f,    ", data.dGyrox);
-		fprintf(fs, "%.10f,    ", data.dGyroy);
-		fprintf(fs, "%.10f,    ", data.dGyroz);
-		fprintf(fs, "%.10f,    ", data.dAccx);
-		fprintf(fs, "%.10f,    ", data.dAccy);
-		fprintf(fs, "%.10f,    ", data.dAccz);
+		fprintf(fs, "%.10f,    ", data.dGyrox);					//22
+		fprintf(fs, "%.10f,    ", data.dGyroy);					//23
+		fprintf(fs, "%.10f,    ", data.dGyroz);					//24
+		fprintf(fs, "%.10f,    ", data.dAccx);					//25
+		fprintf(fs, "%.10f,    ", data.dAccy);					//26
+		fprintf(fs, "%.10f,    ", data.dAccz);					//27
 
-		fprintf(fs, "%d,    ", data.dwDltCnt_dmi);
+		fprintf(fs, "%d,    ", data.dwDltCnt_dmi);				//28
 	}
 
 	if (dmiOutEnable)
 	{
-		fprintf(fs, "%d,    ", data.dmiStatus);
-		fprintf(fs, "%.5f,    ", data.dmi1);
-		fprintf(fs, "%.5f,    ", data.dmi2);
-		fprintf(fs, "%.5f,    ", data.dmi3);
-		fprintf(fs, "%.5f,    ", data.dmi4);
+		fprintf(fs, "%d,    ", data.dmiStatus);					//29
+		fprintf(fs, "%.5f,    ", data.dmi1);					//30
+		fprintf(fs, "%.5f,    ", data.dmi2);					//31
+		fprintf(fs, "%.5f,    ", data.dmi3);					//32
+		fprintf(fs, "%.5f,    ", data.dmi4);					//33
 	}
 
-	fprintf(fs, "%d,    ", data.ucFlag_synchro);
+	fprintf(fs, "%d,    ", data.ucFlag_synchro);				//34
 	fprintf(fs, "\n");
 
 	return 0;

@@ -1,0 +1,10 @@
+/.vs/
+/Debug/
+/Release/
+/ToTestBin/Debug/
+/ToTestBin/Release/
+ToTestBin.sdf
+ToTestBin.sln
+/ToTestBin/ToTestBin.vcxproj
+/ToTestBin/ToTestBin.vcxproj.filters
+/ToTestBin/ToTestBin.vcxproj.user
