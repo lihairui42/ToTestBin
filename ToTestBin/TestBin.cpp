@@ -21,7 +21,7 @@ int TestBinData::CloseFile()
 }
 
 /*
-*从NovatelImuData获取IMU数据
+*从Novatel文件获取IMU数据
 */
 int TestBinData::GetNovatelImu(NovatelImuData &imuN)
 {
@@ -74,7 +74,7 @@ int TestBinData::GetNovatelImu(NovatelImuData &imuN)
 }
 
 /*
-*从NovatelGnssData获取GNSS数据
+*从Novatel文件获取GNSS数据
 */
 int TestBinData::GetNovatelGnss(NovatelGnssData &gnssN)
 {
@@ -123,6 +123,9 @@ int TestBinData::GetNovatelGnss(NovatelGnssData &gnssN)
 	return 0;
 }
 
+/*
+*从TXT文件获取GNSS数据
+*/
 int TestBinData::GetTxtGnss(TxtGnssData &gnssT)
 {
 	data.dLat_gnss = gnssT.lat;
@@ -200,8 +203,112 @@ int TestBinData::GetNovatelDmi(NovatelDmiData &dmiN)
 	return 0;
 }
 
+
 /*
-*从TxtDmiData数据存储
+*从CSV获取LIO数据
+*/
+int TestBinData::GetCsvLio(CsvLioData &lio)
+{
+#if 1
+	double	tmp1 = lio.time[0] + 0.01;
+	int		tmp2 = floor(tmp1 * lioFreq);
+	double  tmp3 = 1.0 / lioFreq;
+
+	double  t = tmp2 * tmp3;
+	double t0 = lio.time[0];
+	double t1 = lio.time[1];
+
+	double dt = t0 - t1;
+	double c0 = (t - t1) / dt;
+	double c1 = (t0 - t) / dt;
+
+	data.lio_time = t;
+	data.lio_quality = lio.quality[0];
+	data.lio_q0 = c0 * lio.q0[0] + c1 * lio.q0[1];
+	data.lio_q1 = c0 * lio.q1[0] + c1 * lio.q1[1];
+	data.lio_q2 = c0 * lio.q2[0] + c1 * lio.q2[1];
+	data.lio_q3 = c0 * lio.q3[0] + c1 * lio.q3[1];
+	data.lio_x = c0 * lio.x[0] + c1 * lio.x[1];
+	data.lio_y = c0 * lio.y[0] + c1 * lio.y[1];
+	data.lio_z = c0 * lio.z[0] + c1 * lio.z[1];
+
+	double norm = sqrt(data.lio_q0 * data.lio_q0 + data.lio_q1 * data.lio_q1 + data.lio_q2 * data.lio_q2 + data.lio_q3 * data.lio_q3);
+	double _1_norm = 1.0 / norm;
+	data.lio_q0 = data.lio_q0 * _1_norm;
+	data.lio_q1 = data.lio_q1 * _1_norm;
+	data.lio_q2 = data.lio_q2 * _1_norm;
+	data.lio_q3 = data.lio_q3 * _1_norm;
+#else
+	data.lio_time = lio.time[0];
+	data.lio_quality = lio.quality[0];
+	data.lio_q0 = lio.q0[0];
+	data.lio_q1 = lio.q1[0];
+	data.lio_q2 = lio.q2[0];
+	data.lio_q3 = lio.q3[0];
+	data.lio_x = lio.x[0];
+	data.lio_y = lio.y[0];
+	data.lio_z = lio.z[0];
+#endif // 0
+
+	data.ucState_gnss = data.ucState_gnss | 0x10;
+	data.ucFlag_synchro = 160;
+	return 0;
+}
+
+/*
+*从CSV获取VIO数据
+*/
+int TestBinData::GetCsvVio(CsvVioData &vio)
+{
+#if 1
+	double	tmp1 = vio.time[0] + 0.01;
+	int		tmp2 = floor(tmp1 * vioFreq);
+	double  tmp3 = 1.0 / vioFreq;
+
+	double  t = tmp2 * tmp3;
+	double t0 = vio.time[0];
+	double t1 = vio.time[1];
+
+	double dt = t0 - t1;
+	double c0 = (t - t1) / dt;
+	double c1 = (t0 - t) / dt;
+
+	data.vio_time = t;
+	data.vio_quality = vio.quality[0];
+	data.vio_q0 = c0 * vio.q0[0] + c1 * vio.q0[1];
+	data.vio_q1 = c0 * vio.q1[0] + c1 * vio.q1[1];
+	data.vio_q2 = c0 * vio.q2[0] + c1 * vio.q2[1];
+	data.vio_q3 = c0 * vio.q3[0] + c1 * vio.q3[1];
+	data.vio_x = c0 * vio.x[0] + c1 * vio.x[1];
+	data.vio_y = c0 * vio.y[0] + c1 * vio.y[1];
+	data.vio_z = c0 * vio.z[0] + c1 * vio.z[1];
+
+	double norm = sqrt(data.vio_q0 * data.vio_q0 + data.vio_q1 * data.vio_q1 + data.vio_q2 * data.vio_q2 + data.vio_q3 * data.vio_q3);
+	double _1_norm = 1.0 / norm;
+	data.vio_q0 = data.vio_q0 * _1_norm;
+	data.vio_q1 = data.vio_q1 * _1_norm;
+	data.vio_q2 = data.vio_q2 * _1_norm;
+	data.vio_q3 = data.vio_q3 * _1_norm;
+#else
+	data.vio_time = vio.time[0];
+	data.vio_quality = vio.quality[0];
+	data.vio_q0 = vio.q0[0];
+	data.vio_q1 = vio.q1[0];
+	data.vio_q2 = vio.q2[0];
+	data.vio_q3 = vio.q3[0];
+	data.vio_x = vio.x[0];
+	data.vio_y = vio.y[0];
+	data.vio_z = vio.z[0];
+#endif // 0
+
+	data.ucState_gnss = data.ucState_gnss | 0x20;
+	data.ucFlag_synchro = 160;
+
+	return 0;
+}
+
+/*
+*TestBin数据输出到TXT
 */
 int TestBinData::WriteData()
 {
@@ -236,7 +343,6 @@ int TestBinData::WriteData()
 		fprintf(fs, "%d,    ", data.ucState_gnss);				//21
 	}
 
-
 	if (imuOutEnable)
 	{
 		fprintf(fs, "%.10f,    ", data.dGyrox);					//22
@@ -258,7 +364,19 @@ int TestBinData::WriteData()
 		fprintf(fs, "%.5f,    ", data.dmi4);					//33
 	}
 
-	fprintf(fs, "%d,    ", data.ucFlag_synchro);				//34
+	if (lioOutEnable)
+	{
+		fprintf(fs, "%.8f,    ", data.lio_q0);					//34
+		fprintf(fs, "%.8f,    ", data.lio_q1);					//35
+		fprintf(fs, "%.8f,    ", data.lio_q2);					//36
+		fprintf(fs, "%.8f,    ", data.lio_q3);					//37
+		fprintf(fs, "%.8f,    ", data.lio_x);					//38
+		fprintf(fs, "%.8f,    ", data.lio_y);					//39
+		fprintf(fs, "%.8f,    ", data.lio_z);					//40
+		fprintf(fs, "%.8f,    ", data.lio_quality);				//41
+	}
+
+	fprintf(fs, "%d,    ", data.ucFlag_synchro);				//42
 	fprintf(fs, "\n");
 
 	return 0;

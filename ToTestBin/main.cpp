@@ -5,7 +5,7 @@
 #include "ProcessNTN.hpp"
 #include "ProcessNTT.hpp"
 #include "Process.hpp"
-#include "CsvLioData.hpp"
+#include "Tools.hpp"
 
 using namespace std;
 
@@ -19,6 +19,9 @@ enum NT_Slect
 	OTHER = 6,
 };
 
+/*
+*funNNN
+*/
 int funNNN()
 {
 	string imuNovatelFile = "D:\\IE\\Group1\\data\\NMND22180012G_2022-08-15_09-51-21.LOG";
@@ -36,6 +39,9 @@ int funNNN()
 	return 0;
 }
 
+/*
+*funNNT
+*/
 int funNNT()
 {
 	string imuNovatelFile = "D:\\IE\\Group1\\data\\NMND22180012G_2022-08-15_09-51-21.LOG";
@@ -49,6 +55,9 @@ int funNNT()
 }
 
 
+/*
+*funNTN
+*/
 int funNTN()
 {
 	string imuNovatelFile = "D:\\IE\\Group1\\data\\NMND22180012G_2022-08-15_09-51-21.LOG";
@@ -61,6 +70,9 @@ int funNTN()
 	return 0;
 }
 
+/*
+*funNTT
+*/
 int funNTT()
 {
 	string imuNovatelFile = "D:\\IE\\Group1\\data\\NMND22180012G_2022-08-15_09-51-21.LOG";
@@ -84,12 +96,14 @@ int funCOM()
 	string gnssTxtFile = "D:\\IE\\Nav1020\\data\\2022_10_20_23_6_13_gps_data.dat";
 	string dmiTxtFile = "D:\\IE\\Nav1020\\data\\2022_10_20_23_6_13_gps_data.dat";
 	string testBinFile = "D:\\IE\\Nav1020\\data\\2022_10_20_23_6_13_gps_data.testbin.txt";
+	string lioFile = "D:\\IE\\Nav1020\\lio_odom\\odom_2022_10_20_23_35_55.csv";
+	string vioFile = "D:\\IE\\Nav1020\\lio_odom\\odom_2022_10_20_23_35_55.csv";
 
 	Process COM(imuNovatelFile, Novatel, 1, 200,
 				gnssTxtFile, Novatel, 1, 5,
 				dmiTxtFile, Novatel, 1, 100,
-				dmiTxtFile, TXT, 0, 10,
-				dmiTxtFile, TXT, 0, 10,
+				lioFile, CSV, 1, 10,
+				vioFile, CSV, 0, 10,
 				testBinFile, 1);
 	
 	COM.Deal();
@@ -99,12 +113,19 @@ int funCOM()
 
 int funOther()
 {
-	string lioFile = "D:\\IE\\Nav1020\\lio_odom\\odom_2022_10_20_23_35_55.csv";
+	Tools tool;
+	gtime_t t;
+	int week = 0;
+	double sec = 0;
+	//double ep[6] = { 2021,12,21,8,27,56 };
+	//t = tool.epoch2time(ep);
+	//t = tool.gpst2time(2232, 371196);
+	//sec = tool.time2gpst(t, &week);
 
-	CsvLioData lio;
-	lio.file = lioFile;
-	lio.OpenFile();
-	lio.GetData();
+	t.time = 1666250542;
+	t.sec = 0.29894;
+	sec = tool.time2gpst(t, &week);
+
 	return 0;
 }
 

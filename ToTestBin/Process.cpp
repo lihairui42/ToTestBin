@@ -345,14 +345,13 @@ int Process::TestBinDMI()
 	if (testBin.sec0 >= 116101.995)
 		testBin.sec0 *= 1.0;
 
-	if (gnssSec > testBin.sec1)
+	if (dmiSec <= testBin.sec1)
 	{
 		dmiNeedRead = 1;
 		return 0;
 	}
 
-
-	if (testBin.sec0 == floor(dmiSec))
+	if (testBin.sec0 == dmiSec)
 	{
 		if (dmiFileType == Novatel)
 			testBin.GetNovatelDmi(dmiN);
@@ -375,9 +374,27 @@ int Process::TestBinLIO()
 		return 0;
 
 	if (lioFileType == CSV)
+	{
+		double	tmp1 = lioC.time[0] + 0.01;
+		int		tmp2 = floor(tmp1 * lioFreq);
+		double  tmp3 = 1.0 / lioFreq;
+		lioSec = tmp2 * tmp3;
+	}
+		
+	if (lioSec <= testBin.sec1)
+	{
+		lioNeedRead = 1;
 		return 0;
+	}
 
-	lioNeedRead = 1;
+	if (testBin.sec0 == lioSec)
+	{
+		if (lioFileType == CSV)
+			testBin.GetCsvLio(lioC);
+
+		lioNeedRead = 1;
+	}
+	
 	return 0;
 }
 
@@ -388,9 +405,26 @@ int Process::TestBinVIO()
 		return 0;
 
 	if (vioFileType == CSV)
-		return 0;
+	{
+		double	tmp1 = vioC.time[0] + 0.01;
+		int		tmp2 = floor(tmp1 * vioFreq);
+		double  tmp3 = 1.0 / vioFreq;
+		vioSec = tmp2 * tmp3;
+	}
 
-	vioNeedRead = 1;
+	if (vioSec <= testBin.sec1)
+	{
+		vioNeedRead = 1;
+		return 0;
+	}
+
+	if (testBin.sec0 == vioSec)
+	{
+		if (vioFileType == CSV)
+			testBin.GetCsvVio(vioC);
+
+		vioNeedRead = 1;
+	}
 	return 0;
 }
 
@@ -410,6 +444,8 @@ int Process::TestBinOut()
 	testBin.imuOutEnable = imuEnable;
 	testBin.gnssOutEnable = gnssEnable;
 	testBin.dmiOutEnable = dmiEnable;
+	testBin.lioOutEnable = lioEnable;
+	testBin.vioOutEnable = vioEnable;
 	if (outEnable)
 		testBin.WriteData();
 
@@ -480,11 +516,11 @@ int Process::Deal()
 			//DMI
 			TestBinDMI();
 
-			////LIO
-			//TestBinLIO();
+			//LIO
+			TestBinLIO();
 
-			////VIO
-			//TestBinVIO();
+			//VIO
+			TestBinVIO();
 
 			//输出到文件
 			TestBinOut();		

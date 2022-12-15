@@ -59,7 +59,7 @@ int TxtDmiData::GetData()
 	static int firstFlag = 1;
 	if (!firstFlag)
 	{
-		for (int i = TXT_DMI_LIST_N - 1; i >= 0; i--)
+		for (int i = TXT_DMI_LIST_N - 1; i >= 1; i--)
 		{
 			time[i] = time[i-1];
 			dmi1[i] = dmi1[i - 1];

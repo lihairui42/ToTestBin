@@ -6,9 +6,12 @@
 
 #include "NovatelImuData.hpp"
 #include "NovatelGnssData.hpp"
-#include "TxtGnssData.hpp"
 #include "NovatelDmiData.hpp"
+#include "TxtGnssData.hpp"
 #include "TxtDmiData.hpp"
+#include "CsvLioData.hpp"
+#include "CsvVioData.hpp"
+
 
 #define TESTBIN_LIST_N		1000
 #define TESTBIN_LIST_N_MAX	4
@@ -76,6 +79,26 @@ struct TestBinUnit
 	double			dmi2;
 	double			dmi3;
 	double			dmi4;
+
+	double			lio_time;
+	double			lio_quality;
+	double			lio_q0;
+	double			lio_q1;
+	double			lio_q2;
+	double			lio_q3;
+	double			lio_x;
+	double			lio_y;
+	double			lio_z;
+
+	double			vio_time;
+	double			vio_quality;
+	double			vio_q0;
+	double			vio_q1;
+	double			vio_q2;
+	double			vio_q3;
+	double			vio_x;
+	double			vio_y;
+	double			vio_z;
 };
 
 
@@ -84,7 +107,11 @@ class TestBinData
 public:
 	friend						NovatelImuData;
 	friend						NovatelGnssData;
+	friend						NovatelDmiData;
+	friend						TxtGnssData;
 	friend						TxtDmiData;
+	friend						CsvLioData;
+	friend						CsvVioData;
 
 	string						file;
 	FILE						*fs;
@@ -103,11 +130,11 @@ public:
 	double						accy[TESTBIN_LIST_N];
 	double						accz[TESTBIN_LIST_N];
 
-	int					       imuOutEnable;
-	int						   gnssOutEnable;
-	int						   dmiOutEnable;
-	int						   lioOutEnable;
-	int						   vioOutEnable;
+	int							imuOutEnable;
+	int							gnssOutEnable;
+	int							dmiOutEnable;
+	int							lioOutEnable;
+	int							vioOutEnable;
 
 	int							imuFreq;
 	int							gnssFreq;
@@ -127,6 +154,9 @@ public:
 
 	int GetNovatelDmi(NovatelDmiData &dmiN);
 	int GetTxtDmi(TxtDmiData &dmiT);
+
+	int GetCsvLio(CsvLioData &lio);
+	int GetCsvVio(CsvVioData &vio);
 
 	int WriteData();
 private:
