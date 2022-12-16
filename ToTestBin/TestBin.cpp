@@ -118,7 +118,7 @@ int TestBinData::GetNovatelGnss(NovatelGnssData &gnssN)
 	}
 
 	data.ucState_gnss = data.ucState_gnss | 0x03;
-	data.ucFlag_synchro = 160;
+	data.ucFlag_synchro= data.ucFlag_synchro | 0xA0;
 
 	return 0;
 }
@@ -150,7 +150,7 @@ int TestBinData::GetTxtGnss(TxtGnssData &gnssT)
 	data.dGnssVel_valid = 1;
 
 	data.ucState_gnss = data.ucState_gnss | 0x03;
-	data.ucFlag_synchro = 160;
+	data.ucFlag_synchro = data.ucFlag_synchro | 0xA0;
 
 	return 0;
 }
@@ -182,8 +182,7 @@ int TestBinData::GetTxtDmi(TxtDmiData &dmiT)
 	data.dmi4 = dmiT.dmi4[0];
 #endif
 
-	data.ucState_gnss = data.ucState_gnss | 0x08;
-	data.ucFlag_synchro = 160;
+	data.ucFlag_synchro = data.ucFlag_synchro | 0x81;
 	
 	return 0;
 }
@@ -199,7 +198,7 @@ int TestBinData::GetNovatelDmi(NovatelDmiData &dmiN)
 	data.dmi3 = dmiN.dmia.dmi3;
 	data.dmi4 = dmiN.dmia.dmi4;
 
-	data.ucState_gnss = data.ucState_gnss | 0x08;
+	data.ucFlag_synchro = data.ucFlag_synchro | 0x81;
 	return 0;
 }
 
@@ -250,8 +249,7 @@ int TestBinData::GetCsvLio(CsvLioData &lio)
 	data.lio_z = lio.z[0];
 #endif // 0
 
-	data.ucState_gnss = data.ucState_gnss | 0x10;
-	data.ucFlag_synchro = 160;
+	data.ucFlag_synchro = data.ucFlag_synchro | 0x82;
 	return 0;
 }
 
@@ -301,8 +299,7 @@ int TestBinData::GetCsvVio(CsvVioData &vio)
 	data.vio_z = vio.z[0];
 #endif // 0
 
-	data.ucState_gnss = data.ucState_gnss | 0x20;
-	data.ucFlag_synchro = 160;
+	data.ucFlag_synchro = data.ucFlag_synchro | 0x84;
 
 	return 0;
 }
