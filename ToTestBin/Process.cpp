@@ -431,14 +431,14 @@ int Process::TestBinVIO()
 /*TestBin数据输出*/
 int Process::TestBinOut()
 {
-	//double ts = 116552;
-	//double te = 116552 + 600;
-	//if (testBin.sec0 < ts)
-	//	outEnable = 0;
-	//else if (testBin.sec0 > te)
-	//	outEnable = 0;
-	//else
-	//	outEnable = 1;
+	double ts = 372800;
+	double te = 116552 + 60000000;
+	if (testBin.sec0 < ts)
+		outEnable = 0;
+	else if (testBin.sec0 > te)
+		outEnable = 0;
+	else
+		outEnable = 1;
 
 	//输出数据到TestBin
 	testBin.imuOutEnable = imuEnable;
