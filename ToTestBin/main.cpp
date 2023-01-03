@@ -96,16 +96,15 @@ int funCOM()
 	string gnssTxtFile = "D:\\IE\\Nav1020\\data\\2022_10_20_23_6_13_gps_data.dat";
 	string dmiTxtFile = "D:\\IE\\Nav1020\\data\\2022_10_20_23_6_13_gps_data.dat";
 	string testBinFile = "D:\\IE\\Nav1020\\data\\2022_10_20_23_6_13_gps_data.testbin.txt";
-	string lioFile = "D:\\IE\\Nav1020\\lio_odom\\odom_2022_10_20_23_35_55.csv";
-	string vioFile = "D:\\IE\\Nav1020\\lio_odom\\odom_2022_10_20_23_35_55.csv";
+	string lioFile = "D:\\IE\\Nav1020\\lio_odom\\odom.csv";
+	string vioFile = "D:\\IE\\Nav1020\\lio_odom\\odom.csv";
 
 	Process COM(imuNovatelFile, Novatel, 1, 200,
 				gnssTxtFile, Novatel, 1, 5,
 				dmiTxtFile, Novatel, 1, 100,
 				lioFile, CSV, 1, 10,
-				vioFile, CSV, 0, 10,
+				vioFile, CSV, 1, 10,
 				testBinFile, 1);
-	
 	COM.Deal();
 	return 0;
 }

@@ -373,7 +373,19 @@ int TestBinData::WriteData()
 		fprintf(fs, "%.8f,    ", data.lio_quality);				//41
 	}
 
-	fprintf(fs, "%d,    ", data.ucFlag_synchro);				//42
+	if (vioOutEnable)
+	{
+		fprintf(fs, "%.8f,    ", data.vio_q0);					//42
+		fprintf(fs, "%.8f,    ", data.vio_q1);					//43
+		fprintf(fs, "%.8f,    ", data.vio_q2);					//44
+		fprintf(fs, "%.8f,    ", data.vio_q3);					//45
+		fprintf(fs, "%.8f,    ", data.vio_x);					//46
+		fprintf(fs, "%.8f,    ", data.vio_y);					//47
+		fprintf(fs, "%.8f,    ", data.vio_z);					//48
+		fprintf(fs, "%.8f,    ", data.vio_quality);				//49
+	}
+
+	fprintf(fs, "%d,    ", data.ucFlag_synchro);				//50
 	fprintf(fs, "\n");
 
 	return 0;
